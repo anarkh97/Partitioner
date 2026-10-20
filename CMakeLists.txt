@@ -17,6 +17,9 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-reorder")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
+include_directories("${CMAKE_SOURCE_DIR}")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
 find_package(MPI REQUIRED COMPONENTS CXX)
 
 # fetch latest argparse
@@ -27,12 +30,19 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(argparse)
 
-include_directories("${CMAKE_SOURCE_DIR}")
+find_package(PETSc REQUIRED)
+message(STATUS "Found PETSc: ${PETSc_LIBRARY} (version ${PETSc_VERSION})")
+if(NOT "${PETSc_LIBRARY_DIR}" STREQUAL "")
+  link_directories("${PETSc_LIBRARY_DIR}")
+endif()
+if(NOT "${PETSc_INCLUDE_DIR}" STREQUAL "")
+  include_directories("${PETSc_INCLUDE_DIR}")
+endif()
 
 add_executable(npart
     Main.cpp
     LogUtils.cpp
 )
 
-target_link_libraries(partitioner mpi)
-target_link_libraries(partitioner argparse)
+target_link_libraries(npart petsc mpi)
+target_link_libraries(npart argparse)
