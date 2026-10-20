@@ -171,6 +171,8 @@ CommandLineData::CommandLineData(MPI_Comm& comm, int argc, char* argv[])
         LogUtils::PrintError("--elems-per-patch must be non-negative (got %d).",
                              max_elems_patch);
     }
+
+    out_file = prefix + "/" + out_file + ".vtu";
 }
 
 #endif
