@@ -46,6 +46,7 @@ endif()
 add_executable(npart
     Main.cpp
     LogUtils.cpp
+    SpaceDiscretization.cpp
 )
 
 target_link_libraries(npart petsc mpi)
