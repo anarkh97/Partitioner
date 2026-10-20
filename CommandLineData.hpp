@@ -58,6 +58,7 @@ CommandLineData::CommandLineData(MPI_Comm& comm, int argc, char* argv[])
         
     }
 
+    MPI_Barrier(comm);
 }
 
 #endif
