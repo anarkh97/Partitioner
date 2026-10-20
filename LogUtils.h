@@ -1,5 +1,5 @@
-#ifndef _LOG_UTILS_H_
-#define _LOG_UTILS_H_
+#ifndef __LOG_UTILS_H__
+#define __LOG_UTILS_H__
 
 #include <cstdio>
 
