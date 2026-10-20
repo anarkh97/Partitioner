@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.30)
 set(CMAKE_C_COMPILER mpicc)
 set(CMAKE_CXX_COMPILER mpicxx)
 
-project(PARTITIONER C CXX)
+project(NPART LANGUAGES C CXX)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "" FORCE)
@@ -29,7 +29,7 @@ FetchContent_MakeAvailable(argparse)
 
 include_directories("${CMAKE_SOURCE_DIR}")
 
-add_executable(partitioner
+add_executable(npart
     Main.cpp
     LogUtils.cpp
 )

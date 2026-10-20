@@ -40,7 +40,7 @@
 *.exe
 *.out
 *.app
-partitioner
+npart
 
 # Build directories
 build/
