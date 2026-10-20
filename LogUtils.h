@@ -6,7 +6,7 @@
 namespace LogUtils
 {
 
-double WallTime();
+double WallTime( );
 
 void PrintHeader( );
 void Print(const char* format, ...);

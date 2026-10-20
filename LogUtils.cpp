@@ -10,9 +10,9 @@ extern MPI_Comm comm;
 namespace LogUtils
 {
 
-double WallTime()
+double WallTime( )
 {
-    return MPI_Wtime();
+    return MPI_Wtime( );
 }
 
 const char* RESET = "\033[0m";
@@ -38,7 +38,8 @@ void Print(const char* format, ...)
 {
     int rank;
     MPI_Comm_rank(comm, &rank);
-    if (rank == 0) {
+    if (rank == 0)
+    {
         va_list Argp;
         va_start(Argp, format);
 
@@ -54,7 +55,8 @@ void PrintSuccess(const char* format, ...)
 {
     int rank;
     MPI_Comm_rank(comm, &rank);
-    if (rank == 0) {
+    if (rank == 0)
+    {
         va_list Argp;
         va_start(Argp, format);
 
@@ -70,7 +72,8 @@ void PrintError(const char* format, ...)
 {
     int rank;
     MPI_Comm_rank(comm, &rank);
-    if (rank == 0) {
+    if (rank == 0)
+    {
         va_list Argp;
         va_start(Argp, format);
 
@@ -105,12 +108,12 @@ void PrintNoBarrier(const char* format, ...)
     //MPI_Comm_rank(comm, &rank);
     //if (!rank)
     //{
-        va_list Argp;
-        va_start(Argp, format);
+    va_list Argp;
+    va_start(Argp, format);
 
-        VPrint(stdout, EMPTY, EMPTY, format, Argp);
+    VPrint(stdout, EMPTY, EMPTY, format, Argp);
 
-        va_end(Argp);
+    va_end(Argp);
     //}
     //MPI_Barrier(comm);
     return;
@@ -122,12 +125,12 @@ void PrintSuccessNoBarrier(const char* format, ...)
     //MPI_Comm_rank(comm, &rank);
     //if (!rank)
     //{
-        va_list Argp;
-        va_start(Argp, format);
+    va_list Argp;
+    va_start(Argp, format);
 
-        VPrint(stdout, GREEN, RESET, format, Argp);
+    VPrint(stdout, GREEN, RESET, format, Argp);
 
-        va_end(Argp);
+    va_end(Argp);
     //}
     //MPI_Barrier(comm);
     return;
@@ -139,12 +142,12 @@ void PrintErrorNoBarrier(const char* format, ...)
     //MPI_Comm_rank(comm, &rank);
     //if (!rank)
     //{
-        va_list Argp;
-        va_start(Argp, format);
+    va_list Argp;
+    va_start(Argp, format);
 
-        VPrint(stderr, RED, RESET, format, Argp);
+    VPrint(stderr, RED, RESET, format, Argp);
 
-        va_end(Argp);
+    va_end(Argp);
     //}
     MPI_Abort(comm, -1);
 }
@@ -155,12 +158,12 @@ void PrintWarningNoBarrier(const char* format, ...)
     //MPI_Comm_rank(comm, &rank);
     //if (!rank)
     //{
-        va_list Argp;
-        va_start(Argp, format);
+    va_list Argp;
+    va_start(Argp, format);
 
-        VPrint(stdout, YELLOW, RESET, format, Argp);
+    VPrint(stdout, YELLOW, RESET, format, Argp);
 
-        va_end(Argp);
+    va_end(Argp);
     //}
     //MPI_Barrier(comm);
     return;
@@ -171,7 +174,8 @@ void Print(FILE* file, const char* format, ...)
 {
     int rank;
     MPI_Comm_rank(comm, &rank);
-    if (rank == 0) {
+    if (rank == 0)
+    {
         va_list Argp;
         va_start(Argp, format);
 
@@ -187,7 +191,8 @@ void PrintSuccess(FILE* file, const char* format, ...)
 {
     int rank;
     MPI_Comm_rank(comm, &rank);
-    if (rank == 0) {
+    if (rank == 0)
+    {
         va_list Argp;
         va_start(Argp, format);
 
@@ -203,7 +208,8 @@ void PrintError(FILE* file, const char* format, ...)
 {
     int rank;
     MPI_Comm_rank(comm, &rank);
-    if (rank == 0) {
+    if (rank == 0)
+    {
         va_list Argp;
         va_start(Argp, format);
 
@@ -238,12 +244,12 @@ void PrintNoBarrier(FILE* file, const char* format, ...)
     //MPI_Comm_rank(comm, &rank);
     //if (!rank)
     //{
-        va_list Argp;
-        va_start(Argp, format);
+    va_list Argp;
+    va_start(Argp, format);
 
-        VPrint(file, EMPTY, EMPTY, format, Argp);
+    VPrint(file, EMPTY, EMPTY, format, Argp);
 
-        va_end(Argp);
+    va_end(Argp);
     //}
     //MPI_Barrier(comm);
     return;
@@ -255,12 +261,12 @@ void PrintSuccessNoBarrier(FILE* file, const char* format, ...)
     //MPI_Comm_rank(comm, &rank);
     //if (!rank)
     //{
-        va_list Argp;
-        va_start(Argp, format);
+    va_list Argp;
+    va_start(Argp, format);
 
-        VPrint(file, GREEN, RESET, format, Argp);
+    VPrint(file, GREEN, RESET, format, Argp);
 
-        va_end(Argp);
+    va_end(Argp);
     //}
     //MPI_Barrier(comm);
     return;
@@ -272,12 +278,12 @@ void PrintErrorNoBarrier(FILE* file, const char* format, ...)
     //MPI_Comm_rank(comm, &rank);
     //if (!rank)
     //{
-        va_list Argp;
-        va_start(Argp, format);
+    va_list Argp;
+    va_start(Argp, format);
 
-        VPrint(file, RED, RESET, format, Argp);
+    VPrint(file, RED, RESET, format, Argp);
 
-        va_end(Argp);
+    va_end(Argp);
     //}
     MPI_Abort(comm, -1);
 }
@@ -288,12 +294,12 @@ void PrintWarningNoBarrier(FILE* file, const char* format, ...)
     //MPI_Comm_rank(comm, &rank);
     //if (!rank)
     //{
-        va_list Argp;
-        va_start(Argp, format);
+    va_list Argp;
+    va_start(Argp, format);
 
-        VPrint(file, YELLOW, RESET, format, Argp);
+    VPrint(file, YELLOW, RESET, format, Argp);
 
-        va_end(Argp);
+    va_end(Argp);
     //}
     //MPI_Barrier(comm);
     return;
