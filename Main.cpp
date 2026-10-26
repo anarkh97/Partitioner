@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
     //!< Create discrete space
     //!<-----------------------------------------------------------------------
     SpaceDiscretization spd(comm, cli_data);
+    spd.CreateMeshPatches();
     spd.OutputMesh( );
 
 
