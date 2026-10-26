@@ -34,6 +34,12 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(argparse)
 
+FetchContent_Declare(
+    json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+)
+FetchContent_MakeAvailable(json)
+
 find_package(PETSc REQUIRED)
 message(STATUS "Found PETSc: ${PETSc_LIBRARY} (version ${PETSc_VERSION})")
 if(NOT "${PETSc_LIBRARY_DIR}" STREQUAL "")
@@ -51,3 +57,4 @@ add_executable(npart
 
 target_link_libraries(npart petsc mpi)
 target_link_libraries(npart argparse)
+target_link_libraries(npart nlohmann_json::nlohmann_json)
