@@ -48,7 +48,7 @@ class SpaceDiscretization
     ~SpaceDiscretization( ) {};
 
     //!< Methods
-    void CreateMeshPatches();
+    void CreateMeshPatches( );
 
     //!< Clean-up
     void Destroy( );

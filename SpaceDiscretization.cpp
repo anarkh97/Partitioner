@@ -115,7 +115,7 @@ void SpaceDiscretization::CreateMeshPatches( )
 {
     //!<-----------------------------------------------------------------------
     //!< Bytes required per DOF (hard-coded for now)
-    //!< Currently for P2/Q2 elements.
+    //!< Currently for P2/Q2 elements; linear grid (xyz on vertex only).
     //!<-----------------------------------------------------------------------
     constexpr byte_t BYTE_PER_VERT = 3 * sizeof(real_t)     //!< Vector unknowns
                                      + 3 * sizeof(real_t);  //!< Coordinates
@@ -134,7 +134,7 @@ void SpaceDiscretization::CreateMeshPatches( )
     array<byte_t, 4> bytes_per_stratum = {BYTE_PER_VERT, BYTE_PER_EDGE,
                                           BYTE_PER_FACE, BYTE_PER_CELL};
 
-    //!< Calculate per node bytes
+    //!< Calculate bytes per node (dof-per-stratum)
     array<int_t, 4> node_offset;
     int_t node_counts = 0;
     for (int_t d = 0; d < 4; d++)
@@ -184,7 +184,7 @@ void SpaceDiscretization::CreateMeshPatches( )
 
             for (int_t i = 0; i < 2 * closure_size; i += 2)
             {  //!< Odd index have orientations
-                const int_t curr_point = closure[i];
+                const int_t& curr_point = closure[i];
                 int_t depth;
                 DMPlexGetPointDepth(dm, curr_point, &depth);
                 if (depth == d)
@@ -279,8 +279,8 @@ void SpaceDiscretization::CreateMeshPatches( )
     if (byte_upper_bound <= 0 && cli_data.shared_bytes_per_sm > 0)
     {
         byte_upper_bound =
-            cli_data.shared_bytes_per_sm / cli_data.resident_per_sm -
-            cli_data.reserve_bytes;
+            (cli_data.shared_bytes_per_sm - cli_data.reserve_bytes) /
+            cli_data.resident_per_sm;
     }
 
     int_t npatches;
@@ -479,9 +479,10 @@ void SpaceDiscretization::CreateMeshPatches( )
         for (int_t i = patch_offsets[p]; i < patch_offsets[p + 1]; i++)
         {
             const int_t e = elem_per_patch[i];
-            for (int_t n = elem_cnn_offsets[e]; n < elem_cnn_offsets[e + 1]; n++)
+            for (int_t n = elem_cnn_offsets[e]; n < elem_cnn_offsets[e + 1];
+                 n++)
             {
-                const int_t node = elem_cnn[n];
+                const int_t& node = elem_cnn[n];
                 if (last_patch[node] != p)
                 {
                     last_patch[node] = p;
@@ -490,7 +491,7 @@ void SpaceDiscretization::CreateMeshPatches( )
             }
         }
 
-        const int_t patch_elems = patch_offsets[p + 1] - patch_offsets[p];
+        const int_t& patch_elems = patch_offsets[p + 1] - patch_offsets[p];
         staged_bytes += patch_bytes;
         max_patch_bytes = max(max_patch_bytes, patch_bytes);
         min_patch_elems = min(min_patch_elems, patch_elems);
@@ -505,8 +506,8 @@ void SpaceDiscretization::CreateMeshPatches( )
     for (int_t node = 0; node < node_counts; node++)
     {
         int_t lambda = 0;
-        for (int_t ee = node2elem_offsets[node]; ee < node2elem_offsets[node + 1];
-             ee++)
+        for (int_t ee = node2elem_offsets[node];
+             ee < node2elem_offsets[node + 1]; ee++)
         {
             const int_t p = colors[node2elem[ee]];
             if (patch_seen[p] != node)
@@ -532,14 +533,18 @@ void SpaceDiscretization::CreateMeshPatches( )
     MPI_Reduce(&npatches, &g_npatches_sum, 1, MPIU_INT, MPI_SUM, 0, comm);
     MPI_Reduce(&npatches, &g_npatches_min, 1, MPIU_INT, MPI_MIN, 0, comm);
     MPI_Reduce(&npatches, &g_npatches_max, 1, MPIU_INT, MPI_MAX, 0, comm);
-    MPI_Reduce(&min_patch_elems, &g_min_patch_elems, 1, MPIU_INT, MPI_MIN, 0, comm);
-    MPI_Reduce(&max_patch_elems, &g_max_patch_elems, 1, MPIU_INT, MPI_MAX, 0, comm);
+    MPI_Reduce(&min_patch_elems, &g_min_patch_elems, 1, MPIU_INT, MPI_MIN, 0,
+               comm);
+    MPI_Reduce(&max_patch_elems, &g_max_patch_elems, 1, MPIU_INT, MPI_MAX, 0,
+               comm);
     MPI_Reduce(&connectivity, &g_connectivity, 1, MPIU_INT, MPI_SUM, 0, comm);
     MPI_Reduce(&shared_nodes, &g_shared_nodes, 1, MPIU_INT, MPI_SUM, 0, comm);
     MPI_Reduce(&node_counts, &g_nodes, 1, MPIU_INT, MPI_SUM, 0, comm);
     MPI_Reduce(&total_bytes, &g_total_bytes, 1, MPI_INT64_T, MPI_SUM, 0, comm);
-    MPI_Reduce(&staged_bytes, &g_staged_bytes, 1, MPI_INT64_T, MPI_SUM, 0, comm);
-    MPI_Reduce(&max_patch_bytes, &g_max_patch_bytes, 1, MPI_INT64_T, MPI_MAX, 0, comm);
+    MPI_Reduce(&staged_bytes, &g_staged_bytes, 1, MPI_INT64_T, MPI_SUM, 0,
+               comm);
+    MPI_Reduce(&max_patch_bytes, &g_max_patch_bytes, 1, MPI_INT64_T, MPI_MAX, 0,
+               comm);
 
     //!< Only rank 0 values are meaningful (and printed)
     LogUtils::Print("Patch metrics (all ranks):");
@@ -551,9 +556,11 @@ void SpaceDiscretization::CreateMeshPatches( )
                     (long long)g_max_patch_bytes);
     LogUtils::Print("  total / staged bytes                 : %lld / %lld",
                     (long long)g_total_bytes, (long long)g_staged_bytes);
-    LogUtils::Print("  replication (staged / total)         : %.3f",
-                    g_total_bytes > 0 ? (double)g_staged_bytes / g_total_bytes : 0.0);
-    LogUtils::Print("  connectivity (sum lambda - 1)        : %d", g_connectivity);
+    LogUtils::Print(
+        "  replication (staged / total)         : %.3f",
+        g_total_bytes > 0 ? (double)g_staged_bytes / g_total_bytes : 0.0);
+    LogUtils::Print("  connectivity (sum lambda - 1)        : %d",
+                    g_connectivity);
     LogUtils::Print("  shared node fraction                 : %.3f",
                     g_nodes > 0 ? (double)g_shared_nodes / g_nodes : 0.0);
 }
@@ -636,7 +643,8 @@ void SpaceDiscretization::OutputMesh( )
                 colors_data[offset + dof] =
                     (field_index == 0)
                         ? rank
-                        : patch_shift + elem2patch[cell_index - rank_cell_start];
+                        : patch_shift +
+                              elem2patch[cell_index - rank_cell_start];
         }
     }
 

@@ -270,9 +270,10 @@ inline CommandLineData::CommandLineData(MPI_Comm& comm, int argc, char* argv[])
         }
         catch (const std::exception& err)
         {
-            LogUtils::PrintError("Could not parse config.json. "
-                                 "%s\n\n%s\nRun with --help for details.",
-                                 err.what( ), cli.usage( ).c_str( ));
+            LogUtils::PrintError(
+                "Could not parse config.json. "
+                "%s\n\n%s\nRun with --help for details.",
+                err.what( ), cli.usage( ).c_str( ));
         }
     }
     else
