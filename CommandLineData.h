@@ -8,7 +8,6 @@
 #include <filesystem>
 #include <fstream>
 #include <nlohmann/json.hpp>
-#include <string>
 
 #include "GlobalTypeDefs.h"
 #include "LogUtils.h"
@@ -30,25 +29,25 @@ struct CommandLineData
         std::filesystem::current_path( ) / "config.json";
 
     //!< Input
-    std::string mesh_file;
+    StringScalarType mesh_file;
 
     //!< Patch partitioning
-    std::string backend_name = "metis";
+    StringScalarType backend_name = "metis";
     PatchPartitionBackend backend = PatchPartitionBackend::METIS;
 
-    int_t npatches = 0;
-    int_t max_bytes_patch = 0;
-    int_t sm_count = 0;
-    int_t shared_bytes_per_sm = 0;
-    int_t resident_per_sm = 4;
-    int_t min_patches_per_sm = 2;
-    int_t reserve_bytes = 0;
-    int_t max_elems_patch = 0;
-    int_t seed = 0;
+    IntScalarType npatches = 0;
+    IntScalarType max_bytes_patch = 0;
+    IntScalarType sm_count = 0;
+    IntScalarType shared_bytes_per_sm = 0;
+    IntScalarType resident_per_sm = 4;
+    IntScalarType min_patches_per_sm = 2;
+    IntScalarType reserve_bytes = 0;
+    IntScalarType max_elems_patch = 0;
+    IntScalarType seed = 0;
 
     //!< Output
-    std::string prefix;
-    std::string out_file;
+    StringScalarType prefix;
+    StringScalarType out_file;
 
     explicit CommandLineData(MPI_Comm& comm, int argc, char* argv[]);
     ~CommandLineData( ) {};
@@ -177,7 +176,7 @@ inline CommandLineData::CommandLineData(MPI_Comm& comm, int argc, char* argv[])
         LogUtils::Print("Found configuration file %s.",
                         config_path.string( ).c_str( ));
 
-        std::vector<std::string> json_args = {argv[0]};
+        StringVectorType json_args = {argv[0]};
 
         std::ifstream file(config_path);
 
@@ -190,80 +189,80 @@ inline CommandLineData::CommandLineData(MPI_Comm& comm, int argc, char* argv[])
             if (conf_data.contains("mesh-file"))
             {
                 json_args.push_back("--mesh-file");
-                json_args.push_back(conf_data["mesh-file"].get<std::string>( ));
+                json_args.push_back(conf_data["mesh-file"].get<StringScalarType>( ));
             }
 
             //!< Patch partitioning
             if (conf_data.contains("backend"))
             {
                 json_args.push_back("--backend");
-                json_args.push_back(conf_data["backend"].get<std::string>( ));
+                json_args.push_back(conf_data["backend"].get<StringScalarType>( ));
             }
             if (conf_data.contains("npatches"))
             {
                 json_args.push_back("--npatches");
                 json_args.push_back(
-                    std::to_string(conf_data["npatches"].get<int_t>( )));
+                    std::to_string(conf_data["npatches"].get<IntScalarType>( )));
             }
             if (conf_data.contains("bytes-per-patch"))
             {
                 json_args.push_back("--bytes-per-patch");
                 json_args.push_back(
-                    std::to_string(conf_data["bytes-per-patch"].get<int_t>( )));
+                    std::to_string(conf_data["bytes-per-patch"].get<IntScalarType>( )));
             }
             if (conf_data.contains("shared-bytes-per-sm"))
             {
                 json_args.push_back("--shared-bytes-per-sm");
                 json_args.push_back(std::to_string(
-                    conf_data["shared-bytes-per-sm"].get<int_t>( )));
+                    conf_data["shared-bytes-per-sm"].get<IntScalarType>( )));
             }
             if (conf_data.contains("sm-count"))
             {
                 json_args.push_back("--sm-count");
                 json_args.push_back(
-                    std::to_string(conf_data["sm-count"].get<int_t>( )));
+                    std::to_string(conf_data["sm-count"].get<IntScalarType>( )));
             }
             if (conf_data.contains("resident-per-sm"))
             {
                 json_args.push_back("--resident-per-sm");
                 json_args.push_back(
-                    std::to_string(conf_data["resident-per-sm"].get<int_t>( )));
+                    std::to_string(conf_data["resident-per-sm"].get<IntScalarType>( )));
             }
             if (conf_data.contains("min-patches-per-sm"))
             {
                 json_args.push_back("--min-patches-per-sm");
                 json_args.push_back(std::to_string(
-                    conf_data["min-patches-per-sm"].get<int_t>( )));
+                    conf_data["min-patches-per-sm"].get<IntScalarType>( )));
             }
             if (conf_data.contains("reserve-bytes"))
             {
                 json_args.push_back("--reserve-bytes");
                 json_args.push_back(
-                    std::to_string(conf_data["reserve-bytes"].get<int_t>( )));
+                    std::to_string(conf_data["reserve-bytes"].get<IntScalarType>( )));
             }
             if (conf_data.contains("elems-per-patch"))
             {
                 json_args.push_back("--elems-per-patch");
                 json_args.push_back(
-                    std::to_string(conf_data["elems-per-patch"].get<int_t>( )));
+                    std::to_string(conf_data["elems-per-patch"].get<IntScalarType>( )));
             }
             if (conf_data.contains("seed"))
             {
                 json_args.push_back("--seed");
                 json_args.push_back(
-                    std::to_string(conf_data["seed"].get<int_t>( )));
+                    std::to_string(conf_data["seed"].get<IntScalarType>( )));
             }
 
             //!< Output
             if (conf_data.contains("prefix"))
             {
                 json_args.push_back("--prefix");
-                json_args.push_back(conf_data["prefix"].get<std::string>( ));
+                json_args.push_back(conf_data["prefix"].get<StringScalarType>( ));
             }
             if (conf_data.contains("out-file"))
             {
                 json_args.push_back("--out-file");
-                json_args.push_back(conf_data["out-file"].get<std::string>( ));
+                json_args.push_back(conf_data["out-file"].get<StringScalarType>( ));
             }
 
             cli.parse_args(json_args);

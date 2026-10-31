@@ -14,7 +14,7 @@
 #include "SpaceDiscretization.h"
 
 MPI_Comm comm;
-real_t start_time;
+RealScalarType start_time;
 
 int main(int argc, char* argv[])
 {
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     //!< Initialize PETSc (only forward the program name)
     //!<-----------------------------------------------------------------------
     PETSC_COMM_WORLD = comm;
-    int_t petsc_argc = 1;
+    IntScalarType petsc_argc = 1;
     PetscInitialize(&petsc_argc, &argv, NULL, NULL);
 
     //!<-----------------------------------------------------------------------
