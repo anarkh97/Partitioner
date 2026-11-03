@@ -15,7 +15,8 @@
 enum PatchPartitionBackend
 {
     METIS = 0,
-    JET
+    JET,
+    CCHP
 };
 
 struct CommandLineData
@@ -40,7 +41,7 @@ struct CommandLineData
     IntScalarType sm_count = 0;
     IntScalarType shared_bytes_per_sm = 0;
     IntScalarType resident_per_sm = 4;
-    IntScalarType min_patches_per_sm = 2;
+    IntScalarType min_patches_per_sm = 8;
     IntScalarType reserve_bytes = 0;
     IntScalarType max_elems_patch = 0;
     IntScalarType seed = 0;
@@ -95,8 +96,8 @@ inline CommandLineData::CommandLineData(MPI_Comm& comm, int argc, char* argv[])
     //!< Patch partitioning
     //!<---------------------------------------------------
     cli.add_argument("--backend")
-        .help("Patch partitioner (metis or jet).")
-        .choices("metis", "jet")
+        .help("Patch partitioner (metis, jet, or cchp).")
+        .choices("metis", "jet", "cchp")
         .default_value("metis")
         .store_into(backend_name);
 
@@ -322,6 +323,10 @@ inline CommandLineData::CommandLineData(MPI_Comm& comm, int argc, char* argv[])
             "--backend jet requested, "
             "but npart was built without JET.");
 #endif
+    }
+    else if (backend_name == "cchp")
+    {
+        backend = PatchPartitionBackend::CCHP;
     }
 
     if (cli.is_used("--npatches") && npatches <= 0)
